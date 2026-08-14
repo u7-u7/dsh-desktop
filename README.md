@@ -29,13 +29,13 @@
 
 > 仅支持 Apple 芯片；暂不支持 Intel Mac。首次运行不需要安装 Node.js 或 `dsh`。
 
-1. [下载 DeepSeek Harness 1.0.2（macOS Apple 芯片）](https://github.com/wangjicheng2004/dsh-desktop/releases/download/v1.0.2/DeepSeek.Harness-1.0.2-mac-arm64.dmg)。不要下载 `Source code (zip)`，它不能直接安装。
+1. 在 [GitHub Releases](https://github.com/wangjicheng2004/dsh-desktop/releases) 下载最新的 `DeepSeek.Harness-*-mac-arm64.dmg`。不要下载 `Source code (zip)`，它不能直接安装。
 2. 双击 DMG，把 **DeepSeek Harness** 拖入「应用程序（Applications）」，复制完成后弹出磁盘镜像。
 3. 从「应用程序」启动 **DeepSeek Harness**。首次启动约需 5–10 秒。
 
 #### 🔐 首次打开提示“无法验证开发者”
 
-当前包尚未签名、公证。请在「应用程序」中按住 Control 点击应用，选择「打开」；仍被阻止时，到「系统设置 → 隐私与安全性」点击“仍要打开”。
+当前包使用本地签名但尚未公证。请在「应用程序」中按住 Control 点击应用，选择「打开」；仍被阻止时，到「系统设置 → 隐私与安全性」点击“仍要打开”。
 
 #### 🔄 升级
 
