@@ -10,16 +10,6 @@
 
 <img width="409" height="203" alt="DeepSeek Harness 状态栏" src="https://github.com/user-attachments/assets/b5515b50-5e6c-4378-8fe4-6bee53474bf2" />
 
-## 📈 项目动态
-
-[![GitHub Stars](https://img.shields.io/github/stars/wangjicheng2004/dsh-desktop?style=flat&logo=github)](https://github.com/wangjicheng2004/dsh-desktop/stargazers)
-
-<img src="assets/star-history.svg" alt="DeepSeek Harness Star 趋势图" />
-
-<img src="assets/commit-activity.svg" alt="DeepSeek Harness 仓库提交活跃度热力图" />
-
-> 图表每天由 GitHub Actions 更新：Star 趋势仅统计本仓库；绿色方块仅统计本仓库的提交。Star 历史从图表启用当天开始记录。
-
 ## ✨ 特性
 
 | 特性 | 说明 |
@@ -167,3 +157,13 @@ npm run dist:mac
 
 - [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 - [Electron](https://www.electronjs.org/)
+
+## 📈 项目动态
+
+[![GitHub Stars](https://img.shields.io/github/stars/wangjicheng2004/dsh-desktop?style=flat&logo=github)](https://github.com/wangjicheng2004/dsh-desktop/stargazers)
+
+<img src="assets/star-history.svg" alt="DeepSeek Harness Star 趋势图" />
+
+<img src="assets/commit-activity.svg" alt="DeepSeek Harness 仓库提交活跃度热力图" />
+
+> 图表每天由 GitHub Actions 更新：Star 趋势仅统计本仓库；绿色方块仅统计本仓库的提交。Star 历史从图表启用当天开始记录。
