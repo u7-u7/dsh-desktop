@@ -14,6 +14,16 @@ function Write-Step([int]$n, [string]$msg) {
 $nodeExe = (Get-Command node.exe -ErrorAction SilentlyContinue).Source
 if (-not $nodeExe) {
     Write-Step 1 "Node.js not found. Trying to install via winget..."
+    $winget = Get-Command winget -ErrorAction SilentlyContinue
+    if (-not $winget) {
+        Write-Host "[ERROR] winget not available on this system."
+        Write-Host "Please install Node.js manually:"
+        Write-Host "  1. Open https://nodejs.org in your browser"
+        Write-Host "  2. Download the LTS Windows Installer (.msi)"
+        Write-Host "  3. Install it, then run this script again"
+        Read-Host "Press Enter to exit"
+        exit 1
+    }
     winget install --id OpenJS.NodeJS.LTS -e --accept-source-agreements --accept-package-agreements --silent
     if ($LASTEXITCODE -ne 0) {
         Write-Host ""
@@ -27,6 +37,11 @@ if (-not $nodeExe) {
     # Refresh PATH for this session from Machine + User (winget does not update it live)
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
     $nodeExe = (Get-Command node.exe -ErrorAction SilentlyContinue).Source
+    if (-not $nodeExe) {
+        # Some systems install node to Program Files\nodejs after refresh
+        $pf = Join-Path $env:ProgramFiles "nodejs\node.exe"
+        if (Test-Path $pf) { $nodeExe = $pf }
+    }
 }
 
 if (-not $nodeExe) {
@@ -91,6 +106,27 @@ if (-not (Test-Path $electronExe)) {
             Expand-Archive -Path $zip.FullName -DestinationPath $dist -Force
             # Electron's Node integration needs path.txt
             Set-Content -Path (Join-Path $PSScriptRoot "node_modules\electron\path.txt") -Value "electron.exe" -NoNewline -Encoding ascii
+        }
+    }
+
+    # Last resort: download the zip directly from the mirror and extract it.
+    if (-not (Test-Path $electronExe)) {
+        Write-Step 4 "Cached zip not found. Downloading Electron binary directly..."
+        $pkg = Get-Content (Join-Path $PSScriptRoot "node_modules\electron\package.json") -Raw | ConvertFrom-Json
+        $version = $pkg.version
+        $arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64") { "arm64" } else { "x64" }
+        $zipName = "electron-v$version-win32-$arch.zip"
+        $dlUrl = "https://npmmirror.com/mirrors/electron/$version/$zipName"
+        $zipPath = Join-Path $env:TEMP $zipName
+        Write-Step 4 "Downloading $dlUrl ..."
+        try {
+            Invoke-WebRequest -Uri $dlUrl -OutFile $zipPath -UseBasicParsing
+            $dist = Join-Path $PSScriptRoot "node_modules\electron\dist"
+            Remove-Item $dist -Recurse -Force -ErrorAction SilentlyContinue
+            Expand-Archive -Path $zipPath -DestinationPath $dist -Force
+            Set-Content -Path (Join-Path $PSScriptRoot "node_modules\electron\path.txt") -Value "electron.exe" -NoNewline -Encoding ascii
+        } catch {
+            Write-Host "[WARN] Direct download failed: $($_.Exception.Message)"
         }
     }
 
