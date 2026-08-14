@@ -1,7 +1,7 @@
 {
   "name": "dsh-desktop",
   "version": "1.0.0",
-  "description": "DeepSeek Harness 桌面封装：双击即启动服务与界面",
+  "description": "DeepSeek Harness desktop wrapper: one-click server + UI with tray",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
