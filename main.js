@@ -10,7 +10,7 @@
 //  5. 系统托盘常驻：关窗不退出，任务不中断
 
 const { app, BrowserWindow, Tray, Menu, dialog, nativeImage } = require("electron");
-const { spawn, exec } = require("child_process");
+const { spawn, exec, execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
@@ -34,20 +34,32 @@ function log(msg) {
 // 找到 dsh 的 node 入口。优先用全局安装的 @deepseek-ai/dsh，找不到则退回 npx。
 // 直接 spawn node + bin.js，绕过 cmd 壳：进程树更干净，taskkill /T 能可靠杀掉服务。
 function resolveDshCommand() {
-  const nodeExe = process.execPath; // Electron 自带的 node
   const candidates = [];
-  // 1) 全局 npm 安装的 dsh（node 同目录下的 node_global 或同级）
-  const globalDirs = [
-    path.join(path.dirname(process.execPath), "node_global", "node_modules", "@deepseek-ai", "dsh"),
-    path.join(path.dirname(process.execPath), "node_modules", "@deepseek-ai", "dsh"),
-  ];
-  for (const dir of globalDirs) {
-    const bin = path.join(dir, "lib", "bin.js");
+  // 1) 解析真实 node.exe（Electron 主进程里 process.execPath 是 electron.exe，不能当 node 用）
+  let nodeExe = null;
+  try {
+    const out = execSync("where node", { encoding: "utf8", windowsHide: true });
+    const first = out.split(/\r?\n/).map((s) => s.trim()).find((s) => s.endsWith("node.exe"));
+    if (first && fs.existsSync(first)) nodeExe = first;
+  } catch {}
+  if (!nodeExe) {
+    // 兜底：让 shell 自己解析 PATH 里的 node
+    candidates.push({ cmd: "node", args: [], shell: true, label: "node(PATH)" });
+  }
+
+  // 2) 通过 npm root -g 定位全局安装的 dsh
+  let globalRoot = null;
+  try {
+    globalRoot = execSync("npm root -g", { encoding: "utf8", windowsHide: true }).trim();
+  } catch {}
+  if (globalRoot && nodeExe) {
+    const bin = path.join(globalRoot, "@deepseek-ai", "dsh", "lib", "bin.js");
     if (fs.existsSync(bin)) {
-      candidates.push({ cmd: nodeExe, args: [bin, "web"], label: bin });
+      candidates.push({ cmd: nodeExe, args: [bin, "web"], label: `dsh(${bin})` });
     }
   }
-  // 2) 退路：npx（需要 PATH 里有 node）
+
+  // 3) 退路：npx（需要 PATH 里有 node/npx）
   candidates.push({ cmd: "npx", args: ["-y", "@deepseek-ai/dsh", "web"], label: "npx" });
   return candidates;
 }
@@ -58,7 +70,7 @@ function startDsh() {
     try {
       log(`尝试启动: ${c.label || c.cmd} web`);
       const child = spawn(c.cmd, c.args, {
-        shell: false,
+        shell: !!c.shell,
         windowsHide: false,
         env: { ...process.env },
       });
