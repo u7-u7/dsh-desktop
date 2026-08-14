@@ -41,6 +41,17 @@
 
 先从菜单栏鲸鱼图标中选择「退出」，再用新 DMG 替换「应用程序」中的同名应用。不要直接从 DMG 窗口运行，否则容易留下多个同名副本。
 
+#### 🧰 终端校验安装（备用）
+
+适合 Finder 安装不顺利、但愿意使用终端的用户。它会下载固定版本、校验脚本与 DMG 的 SHA-256、安装到 `~/Applications`，不会要求管理员密码、覆盖旧应用或修改 Gatekeeper 设置。
+
+```sh
+curl -fL -o /tmp/install-deepseek-harness.sh https://github.com/wangjicheng2004/dsh-desktop/releases/download/v1.0.3/install-macos-v1.0.3.sh
+echo '576e3a45dcf1c72f2bfcb94fa0d4c289952ddac40ae63684fdada271ee1c967f  /tmp/install-deepseek-harness.sh' | shasum -a 256 -c && bash /tmp/install-deepseek-harness.sh
+```
+
+> 该命令会先校验脚本本身。安装完成后，仍请按住 Control 点击应用并选择「打开」。
+
 ### 🪟 Windows：一键安装
 
 1. 获取源码：

@@ -14,3 +14,7 @@
 ## 边界
 
 ad-hoc 签名不提供发布者身份，也不能替代 Apple 公证。最终方案仍是 Developer ID Application 签名、Hardened Runtime、公证与 staple。
+
+## 备用终端安装
+
+提供固定版本的终端安装脚本：下载 DMG、比对 SHA-256、验证磁盘镜像和 App 签名后复制至 `~/Applications`。脚本不使用 `xattr`，不覆盖已有 App，不自动启动应用；用户仍通过 Control 点击确认首次打开。
