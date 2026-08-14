@@ -39,9 +39,10 @@ function iconPath() {
 
 function bundledDshBin() {
   const nodeModulesPath = app.isPackaged
-    // DSH creates OS-level symlinks from its writable profile to every bundled
-    // dependency. Those links cannot target Electron's virtual app.asar path.
-    ? path.join(process.resourcesPath, "app.asar.unpacked", "node_modules")
+    // DSH discovers part of its plugin tree at runtime. Keep its entire npm
+    // installation on disk so Node and DSH's profile symlinks can resolve
+    // every peer dependency instead of relying on electron-builder pruning.
+    ? path.join(process.resourcesPath, "node_modules")
     : path.join(__dirname, "node_modules");
   return path.join(nodeModulesPath, "@deepseek-ai", "dsh", "lib", "bin.js");
 }

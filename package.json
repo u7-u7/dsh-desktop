@@ -1,6 +1,6 @@
 {
   "name": "dsh-desktop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DeepSeek Harness desktop wrapper: bundled server + UI with tray",
   "main": "main.js",
   "scripts": {
@@ -23,11 +23,17 @@
     "appId": "com.deepseek.harness.desktop",
     "productName": "DeepSeek Harness",
     "asar": true,
-    "asarUnpack": ["node_modules/**"],
-    "files": ["main.js", "package.json", "assets/**/*"],
+    "files": ["main.js", "package.json", "assets/**/*", "!node_modules/**/*"],
+    "extraResources": [
+      {
+        "from": "node_modules",
+        "to": "node_modules"
+      }
+    ],
     "mac": {
       "category": "public.app-category.developer-tools",
       "icon": "assets/deepseek.icns",
+      "identity": null,
       "target": [{ "target": "dmg", "arch": ["universal"] }]
     },
     "dmg": { "artifactName": "${productName}-${version}-mac-${arch}.${ext}" }
