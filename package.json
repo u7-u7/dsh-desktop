@@ -10,6 +10,7 @@
     "icon:mac": "node scripts/convert-mac-icon.mjs"
   },
   "dependencies": {
+    "@deepseek-ai/cordis-plugin-group": "1.0.1",
     "@deepseek-ai/dsh": "0.1.0-rc.6"
   },
   "devDependencies": {
@@ -22,32 +23,13 @@
     "appId": "com.deepseek.harness.desktop",
     "productName": "DeepSeek Harness",
     "asar": true,
-    "asarUnpack": [
-      "node_modules/koffi/**",
-      "node_modules/node-pty/**"
-    ],
-    "files": [
-      "main.js",
-      "package.json",
-      "assets/**/*",
-      "!node_modules/sharp/**",
-      "!node_modules/@img/**",
-      "!node_modules/png-to-ico/**"
-    ],
+    "asarUnpack": ["node_modules/**"],
+    "files": ["main.js", "package.json", "assets/**/*"],
     "mac": {
       "category": "public.app-category.developer-tools",
       "icon": "assets/deepseek.icns",
-      "target": [
-        {
-          "target": "dmg",
-          "arch": [
-            "universal"
-          ]
-        }
-      ]
+      "target": [{ "target": "dmg", "arch": ["universal"] }]
     },
-    "dmg": {
-      "artifactName": "${productName}-${version}-mac-${arch}.${ext}"
-    }
+    "dmg": { "artifactName": "${productName}-${version}-mac-${arch}.${ext}" }
   }
 }
