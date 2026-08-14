@@ -47,11 +47,11 @@
 
 > 仅支持 macOS 11+ 与 Apple Silicon（M1/M2/M3/M4）；暂不支持 Intel Mac。应用已内置 DSH，无需安装 Node.js 或 `dsh`。
 
-1. 发布完成后，打开 [GitHub Releases](https://github.com/wangjicheng2004/dsh-desktop/releases)，在最新版本的 **Assets** 中下载 `DeepSeek Harness-*-mac-arm64.dmg`（约 290 MB；首个版本为 `1.0.2`）。**不要下载** `Source code (zip)`，那只是源码，不能直接安装。
+1. 打开 [GitHub Releases](https://github.com/wangjicheng2004/dsh-desktop/releases)，在最新版本的 **Assets** 中下载 `DeepSeek.Harness-*-mac-arm64.dmg`（约 290 MB；当前版本为 `1.0.2`）。**不要下载** `Source code (zip)`，那只是源码，不能直接安装。
 2. 双击下载的 DMG，在弹出窗口中把 **DeepSeek Harness** 拖入「应用程序（Applications）」。复制完成后弹出该磁盘镜像。
 3. 从「应用程序」启动 **DeepSeek Harness**；首次启动约需 5–10 秒。
 
-> 当前 GitHub Release 正在发布准备中；在 Release 页面出现上述 DMG 前，说明还没有公开可下载的安装包，请勿下载源码 ZIP 代替。
+> 当前下载包：[DeepSeek.Harness-1.0.2-mac-arm64.dmg](https://github.com/wangjicheng2004/dsh-desktop/releases/download/v1.0.2/DeepSeek.Harness-1.0.2-mac-arm64.dmg)。
 
 #### 首次打开提示“无法验证开发者”
 
@@ -148,7 +148,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 
 | 现象 | 解决方式 |
 |------|----------|
-| Release 页面没有 DMG | 说明安装包尚未发布；不要下载 Source code ZIP，等待 `DeepSeek Harness-1.0.2-mac-arm64.dmg` 出现在 Assets。 |
+| Release 页面没有 DMG | 刷新页面并确认打开的是本仓库的 [Releases](https://github.com/wangjicheng2004/dsh-desktop/releases)；不要下载 Source code ZIP。 |
 | 提示“服务已退出”或启动白屏 | 退出应用后重新打开；仍有问题时查看日志 `~/Library/Application Support/dsh-desktop/dsh.log`。 |
 | 出现多个 DeepSeek Harness | 退出全部实例，删除「应用程序」中旧副本和已挂载的旧 DMG，再只保留并启动 1.0.2。 |
 | 无法打开应用 | 此包只支持 Apple 芯片。确认「 → 关于本机」中的“芯片”显示 Apple；并按上文的 Control 点击方式首次打开。 |
