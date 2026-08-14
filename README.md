@@ -24,7 +24,7 @@
 ## 📋 环境要求
 
 - **Windows 安装器**：Windows 10 / 11（x64；ARM64 会下载对应架构的 Electron）、Node.js ≥ 22.19
-- **macOS 应用用户**：macOS 11+，Intel 或 Apple Silicon；无需安装 Node.js 或 dsh
+- **macOS 应用用户**：macOS 11+，Apple Silicon（M1/M2/M3/M4）；无需安装 Node.js 或 dsh
 - **macOS 构建者**：Node.js ≥ 22.19、Xcode Command Line Tools；首次构建需要联网下载依赖
 
 > 💡 Windows 安装器会尝试用 winget 自动安装 Node.js；macOS 的 DMG 使用者不需要 Node.js。
@@ -61,7 +61,7 @@
 
 ### macOS：安装 DMG
 
-下载 `DeepSeek Harness-<version>-mac-universal.dmg`，双击打开后把 **DeepSeek Harness** 拖到「应用程序」。应用已内置 DSH，直接从「应用程序」打开即可。
+从 [GitHub Releases](https://github.com/wangjicheng2004/dsh-desktop/releases) 下载 `DeepSeek Harness-<version>-mac-arm64.dmg`，双击打开后把 **DeepSeek Harness** 拖到「应用程序」。应用已内置 DSH，直接从「应用程序」打开即可。
 
 > 当前构件未签名、公证。macOS 首次提示无法验证开发者时，在 Finder 中按住 Control 点击应用，选择「打开」，然后再次确认即可。
 
@@ -182,7 +182,7 @@ npm run icon:mac
 npm run dist:mac
 ```
 
-产物位于 `dist/`，默认生成同时支持 Apple Silicon 和 Intel Mac 的 universal DMG。构建时会把锁定版本的 `@deepseek-ai/dsh` 打入应用；请勿在发布前删除 `package-lock.json`。
+产物位于 `dist/`，目前生成 Apple Silicon（arm64）DMG。构建时会把锁定版本的 `@deepseek-ai/dsh` 打入应用；请勿在发布前删除 `package-lock.json`。
 
 ### 自定义图标
 

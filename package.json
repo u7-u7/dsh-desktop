@@ -1,12 +1,12 @@
 {
   "name": "dsh-desktop",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "DeepSeek Harness desktop wrapper: bundled server + UI with tray",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "package:mac": "electron-builder --mac dir --universal",
-    "dist:mac": "electron-builder --mac dmg --universal",
+    "package:mac": "electron-builder --mac dir --arm64",
+    "dist:mac": "electron-builder --mac dmg --arm64",
     "icon:mac": "node scripts/convert-mac-icon.mjs"
   },
   "dependencies": {
@@ -34,7 +34,7 @@
       "category": "public.app-category.developer-tools",
       "icon": "assets/deepseek.icns",
       "identity": null,
-      "target": [{ "target": "dmg", "arch": ["universal"] }]
+      "target": [{ "target": "dmg", "arch": ["arm64"] }]
     },
     "dmg": { "artifactName": "${productName}-${version}-mac-${arch}.${ext}" }
   }

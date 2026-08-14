@@ -16,6 +16,11 @@ let tray = null;
 let isQuitting = false;
 let dshServiceReady = false;
 
+// macOS may send an activate event while the first launch is still waiting for
+// DSH. Keeping one main process prevents a second app launch from adding more
+// windows or another service process.
+if (!app.requestSingleInstanceLock()) app.quit();
+
 function appDataPath(...parts) {
   return path.join(app.getPath("userData"), ...parts);
 }
@@ -171,6 +176,12 @@ async function waitForServer(timeoutMs = 120000) {
 }
 
 function createWindow() {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.show();
+    mainWindow.focus();
+    return;
+  }
+
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 860,
@@ -235,7 +246,8 @@ app.whenReady().then(async () => {
 
   if (await waitForServer(3000)) {
     log("检测到已有服务在运行，直接使用");
-    createWindow();
+    dshServiceReady = true;
+    showWindow();
     return;
   }
 
@@ -254,7 +266,7 @@ app.whenReady().then(async () => {
 
   dshServiceReady = true;
   log("服务就绪，打开窗口");
-  createWindow();
+  showWindow();
 });
 
 app.on("window-all-closed", () => {
@@ -262,7 +274,13 @@ app.on("window-all-closed", () => {
 });
 
 app.on("activate", () => {
-  if (app.isReady()) showWindow();
+  // The first macOS activate may arrive before dsh web is ready. Opening at
+  // that point creates a blank window; startup will show the real one later.
+  if (app.isReady() && dshServiceReady) showWindow();
+});
+
+app.on("second-instance", () => {
+  if (dshServiceReady) showWindow();
 });
 
 app.on("before-quit", () => {
