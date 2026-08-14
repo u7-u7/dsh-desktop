@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Runtime artifacts
+dsh.log
+.sessions/
+*.session.jsonl
+
+# Build output
+dist/
+out/
+build/
+
+# OS noise
+Thumbs.db
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
