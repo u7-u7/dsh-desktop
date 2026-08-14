@@ -23,15 +23,16 @@
     "productName": "DeepSeek Harness",
     "asar": true,
     "asarUnpack": [
-      "node_modules/**",
-      "!node_modules/sharp/**",
-      "!node_modules/@img/**",
-      "!node_modules/png-to-ico/**"
+      "node_modules/koffi/**",
+      "node_modules/node-pty/**"
     ],
     "files": [
       "main.js",
       "package.json",
-      "assets/**/*"
+      "assets/**/*",
+      "!node_modules/sharp/**",
+      "!node_modules/@img/**",
+      "!node_modules/png-to-ico/**"
     ],
     "mac": {
       "category": "public.app-category.developer-tools",
