@@ -1,4 +1,4 @@
-<img width="409" height="203" alt="状态栏" src="https://github.com/user-attachments/assets/a409cdfc-170e-4441-8cec-66870f26b18a" /># DeepSeek Harness Desktop
+# DeepSeek Harness Desktop
 
 **DeepSeek Harness Desktop**（`dsh-desktop`）是一个将 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web UI 封装为原生桌面应用的启动器。它把"启动服务 → 打开浏览器 → 管理进程"这整套繁琐操作压缩成**双击一次快捷方式**，并以**系统托盘常驻**的方式让智能体任务在后台持续运行。
 
