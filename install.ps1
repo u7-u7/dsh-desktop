@@ -46,13 +46,15 @@ if (Test-Path $npmGlobalBin) {
 # ===== Step 2: ensure @deepseek-ai/dsh is installed globally =====
 # Check the real global dir (npm root -g); never trust 'where dsh'
 # because a stale npx cache would pass that check.
-$globalRoot = (npm.cmd root -g 2>$null | Out-String).Trim()
+# Use cmd /c so npm's stderr warnings (e.g. unknown config) do not surface
+# as PowerShell NativeCommandError records.
+$globalRoot = (& cmd /c "npm.cmd root -g 2>nul" | Out-String).Trim()
 $dshPkgJson = Join-Path $globalRoot "@deepseek-ai\dsh\package.json"
 if (Test-Path $dshPkgJson) {
     Write-Step 2 "@deepseek-ai/dsh already installed."
 } else {
     Write-Step 2 "Installing @deepseek-ai/dsh globally (npmmirror mirror)..."
-    npm.cmd install -g @deepseek-ai/dsh --registry=https://registry.npmmirror.com
+    & cmd /c "npm.cmd install -g @deepseek-ai/dsh --registry=https://registry.npmmirror.com"
     if ($LASTEXITCODE -ne 0) {
         Write-Host "[ERROR] Failed to install @deepseek-ai/dsh. Check your network and retry."
         Read-Host "Press Enter to exit"
@@ -63,7 +65,7 @@ if (Test-Path $dshPkgJson) {
 # ===== Step 3: install Electron (project dependency) =====
 Write-Step 3 "Installing Electron (npmmirror mirror, ~100MB, please wait)..."
 $env:ELECTRON_MIRROR = "https://npmmirror.com/mirrors/electron/"
-npm.cmd install --registry=https://registry.npmmirror.com
+& cmd /c "npm.cmd install --registry=https://registry.npmmirror.com"
 if ($LASTEXITCODE -ne 0) {
     Write-Host "[ERROR] Failed to install Electron. Check your network and retry."
     Read-Host "Press Enter to exit"
