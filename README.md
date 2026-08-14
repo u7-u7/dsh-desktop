@@ -23,21 +23,31 @@
 
 ## 📋 环境要求
 
-- **Windows 安装器**：Windows 10 / 11（x64；ARM64 会下载对应架构的 Electron）、Node.js ≥ 22.19
-- **macOS 应用用户**：macOS 11+，Apple Silicon（M1/M2/M3/M4）；无需安装 Node.js 或 dsh
-- **macOS 构建者**：Node.js ≥ 22.19、Xcode Command Line Tools；首次构建需要联网下载依赖
+| 你的目的 | 系统与前提 | 需要安装什么 | 不需要什么 |
+|----------|------------|--------------|------------|
+| 使用 macOS DMG | macOS 11+、Apple Silicon（M1/M2/M3/M4） | 下载 DMG | Node.js、npm、全局 `dsh` |
+| Windows 一键安装 | Windows 10/11、网络；需要源码目录 | Git，或下载并解压源码 ZIP；脚本会尝试安装 Node.js LTS 与全局 `dsh` | 手动安装 Electron |
+| 本地开发 | macOS 或 Windows；推荐 Node.js 22.19+ 与 npm | Node.js、项目依赖 | 全局 `dsh`（项目依赖已包含） |
+| 构建 macOS DMG | Apple Silicon Mac、macOS 11+、网络、建议至少 2GB 可用空间 | Node.js 22.19+、Xcode Command Line Tools | Apple 开发者账号（仅构建未签名包时） |
 
-> 💡 Windows 安装器会尝试用 winget 自动安装 Node.js；macOS 的 DMG 使用者不需要 Node.js。
+> 💡 Windows 脚本会通过 `winget` 尝试安装 Node.js LTS；没有 `winget` 或安装失败时，请手动安装 Node.js LTS 后重新运行。脚本只检查 `node.exe` 是否存在，不会升级已有的旧版本。
 
 ---
 
 ## 🚀 快速开始
 
+| 你想做什么 | 应该走哪条路径 |
+|------------|----------------|
+| 只想在 Mac 上使用 | 下载 GitHub Release 中的 DMG，见下文 macOS 安装步骤 |
+| 只想在 Windows 上使用 | 获取源码后双击 `install.cmd`，见下文 Windows 一键安装 |
+| 改代码或本地调试 | 使用「本地开发」章节的 `npm ci` 与 `npm start` |
+| 发布新的 Mac 安装包 | 使用「构建 macOS DMG」章节 |
+
 ### macOS：下载安装包（Apple 芯片）
 
 > 仅支持 macOS 11+ 与 Apple Silicon（M1/M2/M3/M4）；暂不支持 Intel Mac。应用已内置 DSH，无需安装 Node.js 或 `dsh`。
 
-1. 打开 [GitHub Releases](https://github.com/wangjicheng2004/dsh-desktop/releases)，在最新版本的 **Assets** 中下载 `DeepSeek Harness-1.0.2-mac-arm64.dmg`（约 290 MB）。**不要下载** `Source code (zip)`，那只是源码，不能直接安装。
+1. 发布完成后，打开 [GitHub Releases](https://github.com/wangjicheng2004/dsh-desktop/releases)，在最新版本的 **Assets** 中下载 `DeepSeek Harness-*-mac-arm64.dmg`（约 290 MB；首个版本为 `1.0.2`）。**不要下载** `Source code (zip)`，那只是源码，不能直接安装。
 2. 双击下载的 DMG，在弹出窗口中把 **DeepSeek Harness** 拖入「应用程序（Applications）」。复制完成后弹出该磁盘镜像。
 3. 从「应用程序」启动 **DeepSeek Harness**；首次启动约需 5–10 秒。
 
@@ -53,38 +63,49 @@
 
 ### Windows：一键安装（推荐）
 
-**只需 3 步，全程无需手动输入命令：**
+**拿到源码后，只需 3 步，无需手动输入安装命令：**
 
 1. **获取代码**
+
+   有 Git：
+
    ```sh
    git clone https://gitee.com/wjc18053186786/dsh-desktop
    cd dsh-desktop
    ```
 
+   没有 Git：从 Gitee 下载源码 ZIP，解压后进入 `dsh-desktop` 文件夹。
+
 2. **运行安装脚本**
    ```
    双击 install.cmd
    ```
-   脚本会自动完成（约 3-5 分钟，取决于网速）：
-   | 步骤 | 内容 |
-   |------|------|
-   | 1/5 | 检测 Node.js，缺失则用 winget 自动安装 |
-   | 2/5 | 全局安装 `@deepseek-ai/dsh`（若未安装） |
-   | 3/5 | 安装 Electron 运行时（含约 100MB 二进制） |
-   | 4/5 | 校验 Electron 二进制完整性（失败自动重试/下载） |
-   | 5/5 | 在桌面创建 **DeepSeek Harness** 快捷方式 |
+   脚本会自动执行 5 个安装步骤（约 3–5 分钟，取决于网速）。
 
 3. **开始使用**
    双击桌面上的 **DeepSeek Harness** 快捷方式，等待窗口弹出即可。
 
+#### 一键安装实际做了什么？
+
+`install.cmd` 只是启动 `install.ps1`；整个过程需要联网，通常约 3–5 分钟，请勿中途关闭窗口。
+
+| 步骤 | 脚本操作 | 结果 |
+|------|----------|------|
+| 1/5 | 检测 `node.exe`；缺失时用 `winget` 安装 Node.js LTS | 当前终端可使用 Node.js 和 npm |
+| 2/5 | 检查并安装全局 `@deepseek-ai/dsh` | 保留原有 Windows 使用方式 |
+| 3/5 | 通过 npmmirror 执行项目 `npm install` | 安装 Electron 与项目依赖 |
+| 4/5 | 校验 `electron.exe`；失败时重试下载、解压缓存、再直连镜像下载 | 生成可运行的 Electron 二进制 |
+| 5/5 | 调用 `create-shortcut.ps1` | 在桌面创建 **DeepSeek Harness** 快捷方式 |
+
+> ⚠️ Windows 的“一键安装”是**源码目录安装**，不是 `.exe` / `.msi` 安装包。桌面快捷方式仍指向该目录下的 `node_modules\electron\dist\electron.exe`；移动或删除源码目录后，需要在新目录重新运行 `install.cmd`。
+
 ### 方式二：Windows 手动安装
 
-适合已经装好 Node.js 和 dsh 的用户：
+适合不使用 `install.cmd`、但已安装 Node.js 的用户。以下命令使用项目内的 DSH，不必全局安装 `dsh`；请在 **CMD** 中执行：
 
 ```sh
-npm i -g @deepseek-ai/dsh --registry=https://registry.npmmirror.com
 set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/
-npm i --registry=https://registry.npmmirror.com
+npm ci --registry=https://registry.npmmirror.com
 powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 ```
 
@@ -107,7 +128,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 | 右键托盘图标 → 显示窗口 | 重新打开窗口 |
 | 右键托盘图标 → 退出 | **彻底退出**：停止服务、清理进程、关闭应用 |
 
-> 💡 若托盘区看不到图标，点击任务栏右侧「^」展开隐藏图标即可。
+> 💡 Windows 的托盘图标可能被收在任务栏右侧「^」中；macOS 的图标位于屏幕顶部菜单栏。
 
 ---
 
@@ -117,7 +138,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 
 | 现象 | 原因 | 解决 |
 |------|------|------|
-| Windows 双击快捷方式没反应 | dsh 未全局安装 / 端口被占用 | 查看 `dsh.log`，确认 `where dsh` 有输出 |
+| Windows 双击快捷方式没反应 | 项目依赖缺失 / 端口被占用 | 查看 `%APPDATA%\dsh-desktop\dsh.log`，确认项目目录中的 `node_modules` 仍存在 |
 | 提示"服务未就绪超时" | dsh 启动失败 / 端口被占用 | 查看 `dsh.log`；确认 3080 端口空闲 |
 | Windows 窗口一闪而过 | 全局 dsh 缺失 | `npm i -g @deepseek-ai/dsh` 后重试 |
 | 托盘区没有图标 | 图标被折叠 | 点任务栏「^」展开，把鲸鱼图标拖出 |
@@ -186,24 +207,38 @@ Electron 主进程 (main.js)
 
 ## 🛠️ 开发
 
-### 本地开发
+### 本地开发（macOS / Windows）
+
+适合修改代码、调试启动器或验证改动。需要 Node.js 22.19+ 与网络；`npm ci` 会按 `package-lock.json` 安装锁定版本的 Electron 和 DSH，无需先全局安装 `dsh`。
 
 ```sh
-npm i                                 # 安装依赖
+npm ci                                # 严格按 lockfile 安装依赖
 npm start                             # 启动 Electron 应用
 ```
 
+Windows 网络较慢时，可先在 CMD 中执行 `set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/`，再运行 `npm ci`。
+
 ### 构建 macOS DMG
 
-在 macOS 上执行：
+仅在 Apple Silicon Mac 上构建。先安装 Node.js 22.19+ 与 Xcode Command Line Tools：
+
+```sh
+xcode-select --install
+```
+
+然后在项目根目录执行：
 
 ```sh
 npm ci
-npm run icon:mac
 npm run dist:mac
 ```
 
-产物位于 `dist/`，目前生成 Apple Silicon（arm64）DMG。构建时会把锁定版本的 `@deepseek-ai/dsh` 打入应用；请勿在发布前删除 `package-lock.json`。
+构建完成后：
+
+- `dist/DeepSeek Harness-<version>-mac-arm64.dmg`：可供用户下载的 Apple Silicon 安装包。
+- `dist/mac-arm64/DeepSeek Harness.app`：未封装成 DMG 的应用目录，便于本机调试。
+
+`npm run package:mac` 只生成上述 `.app` 目录；`npm run dist:mac` 生成 DMG。构建会把锁定版本的 DSH 及完整运行时打入应用，请勿删除 `package-lock.json`。当前包未签名、公证，发布给外部用户前请按 macOS 安装章节测试首次打开流程。
 
 ### 自定义图标
 
@@ -212,8 +247,10 @@ npm run dist:mac
 ```sh
 npm i -D sharp png-to-ico             # 安装转换依赖
 node scripts/convert-icon.mjs         # 生成 deepseek.ico
-powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1   # 更新快捷方式
+powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1   # 更新 Windows 快捷方式
 ```
+
+macOS 图标源文件变更后，执行 `npm run icon:mac` 生成 `assets/deepseek.icns`，再重新运行 `npm run dist:mac`。
 
 
 ---
