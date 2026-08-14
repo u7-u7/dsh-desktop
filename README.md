@@ -10,13 +10,13 @@
 
 | 特性 | 说明 |
 |------|------|
-| 🚀 **一键启动** | 双击快捷方式，自动拉起 `dsh web` 服务并打开界面，无需手动开终端 |
-| 🧩 **托盘常驻** | 关闭窗口仅最小化到系统托盘，服务继续在后台运行，任务不中断 |
-| 🔄 **智能复用** | 若 3080 端口已有服务在运行，直接复用，绝不重复拉起进程 |
-| 🧹 **干净退出** | 仅从托盘菜单选择「退出」才停止服务，`taskkill /T` 彻底清理进程树 |
-| 📝 **日志追踪** | `dsh.log` 记录完整启动过程，出问题可快速定位 |
-| 🌐 **国内友好** | 安装脚本默认使用 npmmirror 镜像，加速 npm 与 Electron 二进制下载 |
-| 🖼️ **品牌图标** | 窗口、任务栏、托盘均使用 DeepSeek 品牌图标 |
+|  **一键启动** | 双击快捷方式，自动拉起 `dsh web` 服务并打开界面，无需手动开终端 |
+|  **托盘常驻** | 关闭窗口仅最小化到系统托盘，服务继续在后台运行，任务不中断 |
+|  **智能复用** | 若 3080 端口已有服务在运行，直接复用，绝不重复拉起进程 |
+|  **干净退出** | 仅从托盘菜单选择「退出」才停止服务，`taskkill /T` 彻底清理进程树 |
+|  **日志追踪** | `dsh.log` 记录完整启动过程，出问题可快速定位 |
+|  **国内友好** | 安装脚本默认使用 npmmirror 镜像，加速 npm 与 Electron 二进制下载 |
+|  **品牌图标** | 窗口、任务栏、托盘均使用 DeepSeek 品牌图标 |
 
 ---
 
@@ -71,7 +71,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 
 ---
 
-## 🖥️ 使用指南
+##  使用指南
 
 ### 首次使用
 
@@ -150,10 +150,6 @@ Electron 主进程 (main.js)
    └─ 6. 托盘「退出」→ taskkill /T 清理整个 dsh 进程树
 ```
 
-**设计要点：**
-- **进程树干净**：直接 spawn `node bin.js`，绕过 cmd 壳，确保 `taskkill /T` 能 100% 清理
-- **不重复拉起**：端口探测避免多实例冲突
-- **日志即诊断**：所有关键节点写入 `dsh.log`
 
 ---
 
@@ -176,13 +172,6 @@ node scripts/convert-icon.mjs         # 生成 deepseek.ico
 powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1   # 更新快捷方式
 ```
 
-### 提交规范
-
-```sh
-git add -A
-git commit -m "描述你的改动"
-git push origin master
-```
 
 ---
 
