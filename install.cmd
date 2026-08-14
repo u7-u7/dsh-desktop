@@ -33,9 +33,10 @@ if not defined NODE_EXE (
     exit /b 1
 )
 
-for %%i in ("%NODE_EXE%") do set "NODE_DIR=%%~dpi"
+REM node.exe was found by 'where', so its directory is already on PATH.
+REM No need to extract the directory; just ensure npm's global bin is on PATH too.
 echo [1/5] Node.js: %NODE_EXE%
-set "PATH=%NODE_DIR%;%APPDATA%\npm;%PATH%"
+set "PATH=%APPDATA%\npm;%PATH%"
 
 REM ===== Step 2: ensure @deepseek-ai/dsh is installed globally =====
 REM Check the real global dir (npm root -g); never trust 'where dsh'
