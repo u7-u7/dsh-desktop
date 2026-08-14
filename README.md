@@ -6,7 +6,7 @@
 
 ---
 
-## ✨ 特性
+##  特性
 
 | 特性 | 说明 |
 |------|------|
@@ -20,17 +20,17 @@
 
 ---
 
-## 📋 环境要求
+##  环境要求
 
 - **操作系统**：Windows 10 / 11（x64；ARM64 会下载对应架构的 Electron）
 - **Node.js**：≥ 22.19（建议 24.x LTS）
 - **网络**：安装阶段需要联网（下载 dsh 与 Electron，约 150MB）
 
-> 💡 没有 Node.js 也没关系——安装脚本会尝试用 winget 自动安装。
+>  没有 Node.js 也没关系——安装脚本会尝试用 winget 自动安装。
 
 ---
 
-## 🚀 快速开始
+##  快速开始
 
 ### 方式一：一键安装（推荐）
 
@@ -92,7 +92,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 
 ---
 
-## 🔧 排错指南
+##  排错指南
 
 ### 常见问题
 
@@ -114,7 +114,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 
 ---
 
-## 📂 项目结构
+##  项目结构
 
 ```
 dsh-desktop/
@@ -132,7 +132,7 @@ dsh-desktop/
 
 ---
 
-## ⚙️ 工作原理
+## ⚙ 工作原理
 
 ```
 双击快捷方式
@@ -153,7 +153,7 @@ Electron 主进程 (main.js)
 
 ---
 
-## 🛠️ 开发
+## ️ 开发
 
 ### 本地开发
 
@@ -175,13 +175,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1   # 更�
 
 ---
 
-## 📄 License
+##  License
 
 [MIT](LICENSE)
 
 ---
 
-## 🙏 致谢
+##  致谢
 
 - [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) — 本项目封装的核心框架
 - [Electron](https://www.electronjs.org/) — 跨平台桌面运行时
