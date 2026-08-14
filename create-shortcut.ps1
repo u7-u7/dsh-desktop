@@ -4,6 +4,7 @@ $ErrorActionPreference = "Stop"
 
 $projectDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $electronExe = Join-Path $projectDir "node_modules\electron\dist\electron.exe"
+$iconPath = Join-Path $projectDir "assets\deepseek.ico"
 
 if (-not (Test-Path $electronExe)) {
     Write-Error "electron.exe not found at $electronExe. Run install.cmd first."
@@ -18,7 +19,7 @@ $sc = $ws.CreateShortcut($lnkPath)
 $sc.TargetPath = $electronExe
 $sc.Arguments = "`"$projectDir`""
 $sc.WorkingDirectory = $projectDir
-$sc.IconLocation = $electronExe
+$sc.IconLocation = $iconPath
 $sc.Description = "DeepSeek Harness - click to start server and UI"
 $sc.Save()
 

@@ -98,6 +98,7 @@ function createWindow() {
     height: 860,
     title: "DeepSeek Harness",
     autoHideMenuBar: true,
+    icon: path.join(__dirname, "assets", "deepseek.ico"),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
