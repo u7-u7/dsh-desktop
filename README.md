@@ -38,7 +38,7 @@
 
 1. **获取代码**
    ```sh
-   git clone https://github.com/<你的用户名>/dsh-desktop.git
+   git clone https://gitee.com/wjc18053186786/dsh-desktop
    cd dsh-desktop
    ```
 
