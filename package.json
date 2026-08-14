@@ -1,14 +1,42 @@
 {
   "name": "dsh-desktop",
-  "version": "1.0.0",
-  "description": "DeepSeek Harness desktop wrapper: one-click server + UI with tray",
+  "version": "1.0.3",
+  "description": "DeepSeek Harness desktop wrapper: bundled server + UI with tray",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package:mac": "electron-builder --mac dir --arm64",
+    "dist:mac": "electron-builder --mac dmg --arm64",
+    "icon:mac": "node scripts/convert-mac-icon.mjs"
+  },
+  "dependencies": {
+    "@deepseek-ai/cordis-plugin-group": "1.0.1",
+    "@deepseek-ai/dsh": "0.1.0-rc.6"
   },
   "devDependencies": {
     "electron": "^37.2.0",
+    "electron-builder": "26.15.3",
     "png-to-ico": "^3.0.2",
     "sharp": "^0.35.3"
+  },
+  "build": {
+    "appId": "com.deepseek.harness.desktop",
+    "productName": "DeepSeek Harness",
+    "asar": true,
+    "files": ["main.js", "package.json", "assets/**/*", "!node_modules/**/*"],
+    "extraResources": [
+      {
+        "from": "node_modules",
+        "to": "node_modules"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "assets/deepseek.icns",
+      "identity": "-",
+      "hardenedRuntime": false,
+      "target": [{ "target": "dmg", "arch": ["arm64"] }]
+    },
+    "dmg": { "artifactName": "${productName}-${version}-mac-${arch}.${ext}" }
   }
 }

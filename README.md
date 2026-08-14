@@ -1,200 +1,159 @@
 # DeepSeek Harness Desktop
 
-**DeepSeek Harness Desktop**（`dsh-desktop`）是一个将 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web UI 封装为原生桌面应用的启动器。它把"启动服务 → 打开浏览器 → 管理进程"这整套繁琐操作压缩成**双击一次快捷方式**，并以**系统托盘常驻**的方式让智能体任务在后台持续运行。
+将 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的 Web UI 封装为桌面应用：双击即可启动本地服务并打开界面，关闭窗口后服务可继续在后台运行。
 
-> DeepSeek Harness 是 DeepSeek 开源的插件化 Agent 框架（一切皆插件，基于 Cordis）。本项目不修改 Harness 本身，只是提供一个更友好的桌面使用方式。
+## 🖼️ 参考图片
 
----
-## 参考图片
-### 图标
-<img width="145" height="147" alt="图标" src="https://github.com/user-attachments/assets/4fca8e3b-e5a3-4a5e-8dc8-9973c14f1dc3" />
+<img width="145" height="147" alt="DeepSeek Harness 图标" src="https://github.com/user-attachments/assets/4fca8e3b-e5a3-4a5e-8dc8-9973c14f1dc3" />
 
-### 客户端
-<img width="2301" height="1555" alt="客户端" src="https://github.com/user-attachments/assets/d4c290a8-13f2-4f2a-a658-8bef6ea6a2e4" />
+<img width="2301" height="1555" alt="DeepSeek Harness 客户端" src="https://github.com/user-attachments/assets/d4c290a8-13f2-4f2a-a658-8bef6ea6a2e4" />
 
-### 状态栏
-<img width="409" height="203" alt="状态栏" src="https://github.com/user-attachments/assets/b5515b50-5e6c-4378-8fe4-6bee53474bf2" />
+<img width="409" height="203" alt="DeepSeek Harness 状态栏" src="https://github.com/user-attachments/assets/b5515b50-5e6c-4378-8fe4-6bee53474bf2" />
 
-
-
-
-
-##  特性
+## ✨ 特性
 
 | 特性 | 说明 |
-|------|------|
-|  **一键启动** | 双击快捷方式，自动拉起 `dsh web` 服务并打开界面，无需手动开终端 |
-|  **托盘常驻** | 关闭窗口仅最小化到系统托盘，服务继续在后台运行，任务不中断 |
-|  **智能复用** | 若 3080 端口已有服务在运行，直接复用，绝不重复拉起进程 |
-|  **干净退出** | 仅从托盘菜单选择「退出」才停止服务，`taskkill /T` 彻底清理进程树 |
-|  **日志追踪** | `dsh.log` 记录完整启动过程，出问题可快速定位 |
-|  **国内友好** | 安装脚本默认使用 npmmirror 镜像，加速 npm 与 Electron 二进制下载 |
-|  **品牌图标** | 窗口、任务栏、托盘均使用 DeepSeek 品牌图标 |
+| --- | --- |
+| 一键启动 | 自动启动 `dsh web` 并打开桌面窗口，无需手动开终端。 |
+| 托盘常驻 | 关闭窗口仅隐藏到托盘，任务不会中断。 |
+| 智能复用 | 3080 端口已有服务时直接复用，不重复启动。 |
+| 日志排错 | 启动过程写入 `dsh.log`，方便定位问题。 |
+| 独立 Mac 应用 | macOS DMG 内置 DSH 和运行时，无需安装 Node.js、npm 或全局 `dsh`。 |
 
----
+## 📋 环境要求
 
-##  环境要求
+| 你的目的 | 要求 |
+| --- | --- |
+| 使用 macOS 安装包 | macOS 11+、Apple Silicon（M1/M2/M3/M4）。 |
+| Windows 一键安装 | Windows 10/11、网络，以及源码目录；有 Git 可克隆，没有 Git 可下载源码 ZIP。 |
+| 本地开发 | macOS 或 Windows；推荐 Node.js 22.19+ 与 npm。 |
+| 构建 macOS DMG | Apple Silicon Mac、Node.js 22.19+、Xcode Command Line Tools、约 2 GB 可用空间。 |
 
-- **操作系统**：Windows 10 / 11（x64；ARM64 会下载对应架构的 Electron）
-- **Node.js**：≥ 22.19（建议 24.x LTS）
-- **网络**：安装阶段需要联网（下载 dsh 与 Electron，约 150MB）
+> 💡 Windows 脚本会尝试通过 `winget` 安装 Node.js LTS。没有 `winget` 或安装失败时，请先手动安装 Node.js LTS 再重试。
 
->  没有 Node.js 也没关系——安装脚本会尝试用 winget 自动安装。
+## 🚀 安装与启动
 
----
+### 🍎 macOS：下载安装包
 
-##  快速开始
+> 仅支持 Apple 芯片；暂不支持 Intel Mac。首次运行不需要安装 Node.js 或 `dsh`。
 
-### 方式一：一键安装（推荐）
+1. 在 [GitHub Releases](https://github.com/wangjicheng2004/dsh-desktop/releases) 下载最新的 `DeepSeek.Harness-*-mac-arm64.dmg`。不要下载 `Source code (zip)`，它不能直接安装。
+2. 双击 DMG，把 **DeepSeek Harness** 拖入「应用程序（Applications）」，复制完成后弹出磁盘镜像。
+3. 从「应用程序」启动 **DeepSeek Harness**。首次启动约需 5–10 秒。
 
-**只需 3 步，全程无需手动输入命令：**
+#### 🔐 首次打开提示“无法验证开发者”
 
-1. **获取代码**
+当前包使用本地签名但尚未公证。请在「应用程序」中按住 Control 点击应用，选择「打开」；仍被阻止时，到「系统设置 → 隐私与安全性」点击“仍要打开”。
+
+#### 🔄 升级
+
+先从菜单栏鲸鱼图标中选择「退出」，再用新 DMG 替换「应用程序」中的同名应用。不要直接从 DMG 窗口运行，否则容易留下多个同名副本。
+
+#### 🧰 终端校验安装（备用）
+
+适合 Finder 安装不顺利、但愿意使用终端的用户。它会下载固定版本、校验脚本与 DMG 的 SHA-256、安装到 `~/Applications`，不会要求管理员密码、覆盖旧应用或修改 Gatekeeper 设置。
+
+```sh
+curl -fL -o /tmp/install-deepseek-harness.sh https://github.com/wangjicheng2004/dsh-desktop/releases/download/v1.0.3/install-macos-v1.0.3.sh
+echo '576e3a45dcf1c72f2bfcb94fa0d4c289952ddac40ae63684fdada271ee1c967f  /tmp/install-deepseek-harness.sh' | shasum -a 256 -c && bash /tmp/install-deepseek-harness.sh
+```
+
+> 该命令会先校验脚本本身。安装完成后，仍请按住 Control 点击应用并选择「打开」。
+
+### 🪟 Windows：一键安装
+
+1. 获取源码：
+
    ```sh
    git clone https://gitee.com/wjc18053186786/dsh-desktop
    cd dsh-desktop
    ```
 
-2. **运行安装脚本**
-   ```
-   双击 install.cmd
-   ```
-   脚本会自动完成（约 3-5 分钟，取决于网速）：
-   | 步骤 | 内容 |
-   |------|------|
-   | 1/5 | 检测 Node.js，缺失则用 winget 自动安装 |
-   | 2/5 | 全局安装 `@deepseek-ai/dsh`（若未安装） |
-   | 3/5 | 安装 Electron 运行时（含约 100MB 二进制） |
-   | 4/5 | 校验 Electron 二进制完整性（失败自动重试/下载） |
-   | 5/5 | 在桌面创建 **DeepSeek Harness** 快捷方式 |
+   没有 Git 时，下载并解压 Gitee 的源码 ZIP。
 
-3. **开始使用**
-   双击桌面上的 **DeepSeek Harness** 快捷方式，等待窗口弹出即可。
+2. 双击 `install.cmd`，保持窗口打开直至完成（通常约 3–5 分钟）。
+3. 双击桌面的 **DeepSeek Harness** 快捷方式。
 
-### 方式二：手动安装
+安装脚本会依次检测或安装 Node.js、全局 DSH、项目依赖和 Electron，并创建桌面快捷方式。
 
-适合已经装好 Node.js 和 dsh 的用户：
+> ⚠️ 这是“源码目录安装”，不是 `.exe` / `.msi` 安装包。快捷方式依赖当前源码目录；移动或删除它后，请在新目录重新运行 `install.cmd`。
 
-```sh
-npm i -g @deepseek-ai/dsh --registry=https://registry.npmmirror.com
+### 🧰 Windows：手动安装（可选）
+
+适用于不使用 `install.cmd` 的场景。请在 **CMD** 中执行：
+
+```bat
 set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/
-npm i --registry=https://registry.npmmirror.com
+npm ci --registry=https://registry.npmmirror.com
 powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 ```
 
----
+## 🧭 使用
 
-##  使用指南
-
-### 首次使用
-
-1. 双击桌面快捷方式，等待窗口加载（首次启动服务约需 5-10 秒）
-2. 打开 **设置 → 模型**，填入你的 DeepSeek API Key（在 [platform.deepseek.com](https://platform.deepseek.com) 获取）
-3. 选择工作目录并新建会话，开始使用
-
-### 窗口与托盘
+1. 打开应用，等待窗口加载。
+2. 在 **设置 → 模型** 填入 [DeepSeek API Key](https://platform.deepseek.com)。
+3. 选择工作目录并新建会话。
 
 | 操作 | 效果 |
-|------|------|
-| 关闭窗口（点 X） | 最小化到系统托盘，服务**继续后台运行** |
-| 单击托盘图标 | 重新打开窗口 |
-| 右键托盘图标 → 显示窗口 | 重新打开窗口 |
-| 右键托盘图标 → 退出 | **彻底退出**：停止服务、清理进程、关闭应用 |
+| --- | --- |
+| 关闭窗口 | 隐藏到系统托盘，服务继续运行。 |
+| 单击托盘图标 | 重新打开窗口。 |
+| 托盘菜单 → 退出 | 停止服务并退出应用。 |
 
-> 💡 若托盘区看不到图标，点击任务栏右侧「^」展开隐藏图标即可。
+## 🔧 排错
 
----
+| 现象 | 处理方式 |
+| --- | --- |
+| macOS 首次无法打开 | 按住 Control 点击应用并选择「打开」；必要时在「隐私与安全性」点击“仍要打开”。 |
+| macOS 提示服务已退出或白屏 | 退出后重开；仍有问题时查看 `~/Library/Application Support/dsh-desktop/dsh.log`。 |
+| Windows 双击快捷方式没反应 | 查看 `%APPDATA%\dsh-desktop\dsh.log`，确认源码目录和其中的 `node_modules` 还在。 |
+| 服务未就绪超时 | 确认 3080 端口没有被其他程序占用，再重新启动。 |
+| 出现多个同名应用 | 退出全部实例，删除旧副本和已挂载的旧 DMG，只从「应用程序」启动最新版。 |
 
-##  排错指南
+## 🛠️ 开发与构建
 
-### 常见问题
+### 💻 本地开发（macOS / Windows）
 
-| 现象 | 原因 | 解决 |
-|------|------|------|
-| 双击快捷方式没反应 | dsh 未全局安装 / 端口被占用 | 查看 `dsh.log`，确认 `where dsh` 有输出 |
-| 提示"服务未就绪超时" | dsh 启动失败 / 端口被占用 | 查看 `dsh.log`；确认 3080 端口空闲 |
-| 窗口一闪而过 | 全局 dsh 缺失 | `npm i -g @deepseek-ai/dsh` 后重试 |
-| 托盘区没有图标 | 图标被折叠 | 点任务栏「^」展开，把鲸鱼图标拖出 |
-| `electron.exe` 未生成 | 二进制下载失败 | 见下文「Electron 二进制下载失败」 |
-
-### Electron 二进制下载失败
-
-安装脚本内置了**三级自动修复**（重跑 install.js → 解压缓存 zip → 直连镜像下载）。若仍失败，手动处理：
-
-1. 检查 `node_modules\electron\dist\electron.exe` 是否存在
-2. 手动下载 `electron-v<版本>-win32-x64.zip` 并解压到 `node_modules\electron\dist\`
-3. 在 `node_modules\electron\` 下创建 `path.txt`，内容为 `electron.exe`
-
----
-
-##  项目结构
-
-```
-dsh-desktop/
-├── main.js               # Electron 主进程：启动服务、托盘常驻、退出清理
-├── install.cmd           # 安装入口（薄壳，调用 install.ps1）
-├── install.ps1           # 一键安装脚本（全部逻辑）
-├── create-shortcut.ps1   # 创建桌面快捷方式
-├── package.json          # 依赖声明（electron）
-├── assets/
-│   ├── deepseek.ico      # 应用图标（多尺寸）
-│   └── deepseek-color.svg # 图标源文件
-└── scripts/
-    └── convert-icon.mjs  # SVG → ICO 转换工具
-```
-
----
-
-## ⚙ 工作原理
-
-```
-双击快捷方式
-   │
-   ▼
-Electron 主进程 (main.js)
-   │
-   ├─ 1. 解析 node.exe 与全局 dsh 路径（where node + npm root -g）
-   ├─ 2. 探测 http://127.0.0.1:3080
-   │     ├─ 已有服务 → 直接复用
-   │     └─ 无服务 → spawn node <dsh bin.js> web（不经过 cmd 壳）
-   ├─ 3. 轮询等待服务就绪（最多 120 秒）
-   ├─ 4. 打开窗口加载 Web UI
-   ├─ 5. 关窗 → 隐藏到托盘，服务继续
-   └─ 6. 托盘「退出」→ taskkill /T 清理整个 dsh 进程树
-```
-
-
----
-
-## ️ 开发
-
-### 本地开发
+`npm ci` 会根据 `package-lock.json` 安装锁定版本的 Electron 和 DSH。
 
 ```sh
-npm i                                 # 安装依赖
-npm start                             # 启动 Electron 应用
+npm ci
+npm start
 ```
 
-### 自定义图标
+Windows 下载较慢时，可先在 CMD 中执行：
 
-把你的图标图片（png/jpg/svg）放到 `assets/` 目录，然后：
+```bat
+set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/
+```
+
+### 📦 构建 macOS DMG
+
+先安装 Xcode Command Line Tools：
 
 ```sh
-npm i -D sharp png-to-ico             # 安装转换依赖
-node scripts/convert-icon.mjs         # 生成 deepseek.ico
-powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1   # 更新快捷方式
+xcode-select --install
 ```
 
+然后在项目根目录运行：
 
----
+```sh
+npm ci
+npm run dist:mac
+```
 
-##  License
+产物：
+
+- `dist/DeepSeek Harness-<version>-mac-arm64.dmg`：可发布的安装包。
+- `dist/mac-arm64/DeepSeek Harness.app`：用于本机调试的应用目录。
+
+只生成 `.app` 时运行 `npm run package:mac`。当前构建的是未签名的 Apple Silicon 安装包。
+
+## 📄 License
 
 [MIT](LICENSE)
 
----
+## 🙏 致谢
 
-##  致谢
-
-- [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) — 本项目封装的核心框架
-- [Electron](https://www.electronjs.org/) — 跨平台桌面运行时
+- [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
+- [Electron](https://www.electronjs.org/)
