@@ -16,17 +16,18 @@
 |  **干净退出** | 仅从托盘菜单选择「退出」才停止服务，`taskkill /T` 彻底清理进程树 |
 |  **日志追踪** | `dsh.log` 记录完整启动过程，出问题可快速定位 |
 |  **国内友好** | 安装脚本默认使用 npmmirror 镜像，加速 npm 与 Electron 二进制下载 |
-|  **品牌图标** | 窗口、任务栏、托盘均使用 DeepSeek 品牌图标 |
+|  **品牌图标** | Windows 与 macOS 均使用 DeepSeek 品牌图标 |
+|  **独立 Mac 应用** | macOS DMG 内置固定版本的 DSH 与运行时，最终用户无需安装 Node.js 或 dsh |
 
 ---
 
 ## 📋 环境要求
 
-- **操作系统**：Windows 10 / 11（x64；ARM64 会下载对应架构的 Electron）
-- **Node.js**：≥ 22.19（建议 24.x LTS）
-- **网络**：安装阶段需要联网（下载 dsh 与 Electron，约 150MB）
+- **Windows 安装器**：Windows 10 / 11（x64；ARM64 会下载对应架构的 Electron）、Node.js ≥ 22.19
+- **macOS 应用用户**：macOS 11+，Intel 或 Apple Silicon；无需安装 Node.js 或 dsh
+- **macOS 构建者**：Node.js ≥ 22.19、Xcode Command Line Tools；首次构建需要联网下载依赖
 
-> 💡 没有 Node.js 也没关系——安装脚本会尝试用 winget 自动安装。
+> 💡 Windows 安装器会尝试用 winget 自动安装 Node.js；macOS 的 DMG 使用者不需要 Node.js。
 
 ---
 
@@ -58,7 +59,13 @@
 3. **开始使用**
    双击桌面上的 **DeepSeek Harness** 快捷方式，等待窗口弹出即可。
 
-### 方式二：手动安装
+### macOS：安装 DMG
+
+下载 `DeepSeek Harness-<version>-mac-universal.dmg`，双击打开后把 **DeepSeek Harness** 拖到「应用程序」。应用已内置 DSH，直接从「应用程序」打开即可。
+
+> 当前构件未签名、公证。macOS 首次提示无法验证开发者时，在 Finder 中按住 Control 点击应用，选择「打开」，然后再次确认即可。
+
+### 方式二：Windows 手动安装
 
 适合已经装好 Node.js 和 dsh 的用户：
 
@@ -75,7 +82,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 
 ### 首次使用
 
-1. 双击桌面快捷方式，等待窗口加载（首次启动服务约需 5-10 秒）
+1. 从 Windows 桌面快捷方式或 macOS「应用程序」打开应用，等待窗口加载（首次启动服务约需 5-10 秒）
 2. 打开 **设置 → 模型**，填入你的 DeepSeek API Key（在 [platform.deepseek.com](https://platform.deepseek.com) 获取）
 3. 选择工作目录并新建会话，开始使用
 
@@ -98,9 +105,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 
 | 现象 | 原因 | 解决 |
 |------|------|------|
-| 双击快捷方式没反应 | dsh 未全局安装 / 端口被占用 | 查看 `dsh.log`，确认 `where dsh` 有输出 |
+| Windows 双击快捷方式没反应 | dsh 未全局安装 / 端口被占用 | 查看 `dsh.log`，确认 `where dsh` 有输出 |
 | 提示"服务未就绪超时" | dsh 启动失败 / 端口被占用 | 查看 `dsh.log`；确认 3080 端口空闲 |
-| 窗口一闪而过 | 全局 dsh 缺失 | `npm i -g @deepseek-ai/dsh` 后重试 |
+| Windows 窗口一闪而过 | 全局 dsh 缺失 | `npm i -g @deepseek-ai/dsh` 后重试 |
 | 托盘区没有图标 | 图标被折叠 | 点任务栏「^」展开，把鲸鱼图标拖出 |
 | `electron.exe` 未生成 | 二进制下载失败 | 见下文「Electron 二进制下载失败」 |
 
@@ -122,12 +129,15 @@ dsh-desktop/
 ├── install.cmd           # 安装入口（薄壳，调用 install.ps1）
 ├── install.ps1           # 一键安装脚本（全部逻辑）
 ├── create-shortcut.ps1   # 创建桌面快捷方式
+├── scripts/
+│   ├── convert-icon.mjs   # SVG → Windows ICO 转换工具
+│   └── convert-mac-icon.mjs # SVG → macOS ICNS 转换工具
 ├── package.json          # 依赖声明（electron）
 ├── assets/
-│   ├── deepseek.ico      # 应用图标（多尺寸）
+│   ├── deepseek.ico      # Windows 应用图标（多尺寸）
+│   ├── deepseek.icns     # macOS 应用图标
 │   └── deepseek-color.svg # 图标源文件
-└── scripts/
-    └── convert-icon.mjs  # SVG → ICO 转换工具
+└── package-lock.json     # 精确锁定 Electron 与随包 DSH 版本
 ```
 
 ---
@@ -140,14 +150,14 @@ dsh-desktop/
    ▼
 Electron 主进程 (main.js)
    │
-   ├─ 1. 解析 node.exe 与全局 dsh 路径（where node + npm root -g）
+   ├─ 1. 生产应用直接读取包内固定版本的 dsh
    ├─ 2. 探测 http://127.0.0.1:3080
    │     ├─ 已有服务 → 直接复用
    │     └─ 无服务 → spawn node <dsh bin.js> web（不经过 cmd 壳）
    ├─ 3. 轮询等待服务就绪（最多 120 秒）
    ├─ 4. 打开窗口加载 Web UI
    ├─ 5. 关窗 → 隐藏到托盘，服务继续
-   └─ 6. 托盘「退出」→ taskkill /T 清理整个 dsh 进程树
+   └─ 6. 托盘「退出」→ Windows 使用 taskkill /T，macOS 使用进程组 SIGTERM 清理 dsh
 ```
 
 
@@ -161,6 +171,18 @@ Electron 主进程 (main.js)
 npm i                                 # 安装依赖
 npm start                             # 启动 Electron 应用
 ```
+
+### 构建 macOS DMG
+
+在 macOS 上执行：
+
+```sh
+npm ci
+npm run icon:mac
+npm run dist:mac
+```
+
+产物位于 `dist/`，默认生成同时支持 Apple Silicon 和 Intel Mac 的 universal DMG。构建时会把锁定版本的 `@deepseek-ai/dsh` 打入应用；请勿在发布前删除 `package-lock.json`。
 
 ### 自定义图标
 
