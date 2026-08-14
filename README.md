@@ -33,7 +33,25 @@
 
 ## 🚀 快速开始
 
-### 方式一：一键安装（推荐）
+### macOS：下载安装包（Apple 芯片）
+
+> 仅支持 macOS 11+ 与 Apple Silicon（M1/M2/M3/M4）；暂不支持 Intel Mac。应用已内置 DSH，无需安装 Node.js 或 `dsh`。
+
+1. 打开 [GitHub Releases](https://github.com/wangjicheng2004/dsh-desktop/releases)，在最新版本的 **Assets** 中下载 `DeepSeek Harness-1.0.2-mac-arm64.dmg`（约 290 MB）。**不要下载** `Source code (zip)`，那只是源码，不能直接安装。
+2. 双击下载的 DMG，在弹出窗口中把 **DeepSeek Harness** 拖入「应用程序（Applications）」。复制完成后弹出该磁盘镜像。
+3. 从「应用程序」启动 **DeepSeek Harness**；首次启动约需 5–10 秒。
+
+> 当前 GitHub Release 正在发布准备中；在 Release 页面出现上述 DMG 前，说明还没有公开可下载的安装包，请勿下载源码 ZIP 代替。
+
+#### 首次打开提示“无法验证开发者”
+
+当前版本尚未签名、公证。请在「应用程序」中按住 Control 点击 **DeepSeek Harness**，选择「打开」，再点击一次「打开」。若仍被阻止，到「系统设置 → 隐私与安全性」选择“仍要打开”。
+
+#### 从旧版本升级
+
+先从菜单栏鲸鱼图标的菜单选择「退出」，再用新 DMG 将「应用程序」中的同名应用替换为新版。不要直接从 DMG 窗口运行应用；这样会保留旧副本，并造成多个同名应用难以区分。
+
+### Windows：一键安装（推荐）
 
 **只需 3 步，全程无需手动输入命令：**
 
@@ -58,12 +76,6 @@
 
 3. **开始使用**
    双击桌面上的 **DeepSeek Harness** 快捷方式，等待窗口弹出即可。
-
-### macOS：安装 DMG
-
-从 [GitHub Releases](https://github.com/wangjicheng2004/dsh-desktop/releases) 下载 `DeepSeek Harness-<version>-mac-arm64.dmg`，双击打开后把 **DeepSeek Harness** 拖到「应用程序」。应用已内置 DSH，直接从「应用程序」打开即可。
-
-> 当前构件未签名、公证。macOS 首次提示无法验证开发者时，在 Finder 中按住 Control 点击应用，选择「打开」，然后再次确认即可。
 
 ### 方式二：Windows 手动安装
 
@@ -110,6 +122,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File create-shortcut.ps1
 | Windows 窗口一闪而过 | 全局 dsh 缺失 | `npm i -g @deepseek-ai/dsh` 后重试 |
 | 托盘区没有图标 | 图标被折叠 | 点任务栏「^」展开，把鲸鱼图标拖出 |
 | `electron.exe` 未生成 | 二进制下载失败 | 见下文「Electron 二进制下载失败」 |
+
+### macOS 常见问题
+
+| 现象 | 解决方式 |
+|------|----------|
+| Release 页面没有 DMG | 说明安装包尚未发布；不要下载 Source code ZIP，等待 `DeepSeek Harness-1.0.2-mac-arm64.dmg` 出现在 Assets。 |
+| 提示“服务已退出”或启动白屏 | 退出应用后重新打开；仍有问题时查看日志 `~/Library/Application Support/dsh-desktop/dsh.log`。 |
+| 出现多个 DeepSeek Harness | 退出全部实例，删除「应用程序」中旧副本和已挂载的旧 DMG，再只保留并启动 1.0.2。 |
+| 无法打开应用 | 此包只支持 Apple 芯片。确认「 → 关于本机」中的“芯片”显示 Apple；并按上文的 Control 点击方式首次打开。 |
 
 ### Electron 二进制下载失败
 
