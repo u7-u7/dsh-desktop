@@ -564,7 +564,9 @@ function createDesktopServices({ dshHome, fetchImpl = globalThis.fetch }) {
     if (!skin) return;
     const isActive = skin.id === state.activeSkinId;
     if (isActive) state.activeSkinId = null;
-    if (skin.type === "plugin") {
+    const activeSkin = state.skins.find((item) => item.id === state.activeSkinId);
+    const packageStillActive = activeSkin?.type === "plugin" && activeSkin.packageName === skin.packageName;
+    if (skin.type === "plugin" && !packageStillActive) {
       await removePluginBundles(state, [skin.packageName]);
       await fs.rm(safePath(path.join(profileRoot, "node_modules"), skin.packageName), { recursive: true, force: true });
     }
@@ -650,3 +652,4 @@ function createDesktopServices({ dshHome, fetchImpl = globalThis.fetch }) {
 }
 
 module.exports = { createDesktopServices, parseGitHubSkinUrl };
+

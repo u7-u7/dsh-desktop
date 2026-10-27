@@ -7,6 +7,43 @@ const { execFileSync } = require("node:child_process");
 const yaml = require("js-yaml");
 const { createDesktopServices, parseGitHubSkinUrl } = require("../desktop-services");
 
+test("removing an inactive skin preserves the package used by the active skin", async () => {
+  await withTemporaryHome(async (dshHome) => {
+    const profile = path.join(dshHome, "profiles", "web");
+    const packageName = "@example/shared-skin";
+    await fs.mkdir(profile, { recursive: true });
+    await fs.writeFile(path.join(profile, "package.json"), JSON.stringify({
+      dsh: { profile: { bundles: ["@deepseek-ai/dsh-web-app"] } },
+    }));
+    const services = createDesktopServices({ dshHome });
+    for (const id of ["skin-a", "skin-b"]) {
+      const source = path.join(dshHome, id);
+      await fs.mkdir(path.join(source, "lib"), { recursive: true });
+      await Promise.all([
+        fs.writeFile(path.join(source, "skin.json"), JSON.stringify({ id })),
+        fs.writeFile(path.join(source, "package.json"), JSON.stringify({
+          name: packageName, dsh: { bundle: { patch: "./cordis.patch.yml" } },
+        })),
+        fs.writeFile(path.join(source, "cordis.patch.yml"), "plugins: []\n"),
+        fs.writeFile(path.join(source, "lib", "client.js"), "// inert test skin\n"),
+      ]);
+      await services.importSkin(source);
+    }
+    await services.applySkin("skin-b");
+    assert.deepEqual(await services.removeSkin("skin-a"), { requiresRestart: false });
+    assert.equal((await services.listSkins()).find((skin) => skin.id === "skin-b").active, true);
+    const readBundles = async () => JSON.parse(await fs.readFile(path.join(profile, "package.json"), "utf8")).dsh.profile.bundles;
+    assert.deepEqual(await readBundles(), ["@deepseek-ai/dsh-web-app", packageName]);
+    const installedPackage = path.join(profile, "node_modules", packageName);
+    await fs.access(path.join(installedPackage, "lib", "client.js"));
+    // Removing the active skin must still clean up its runtime package.
+    assert.deepEqual(await services.removeSkin("skin-b"), { requiresRestart: true });
+    assert.deepEqual(await readBundles(), ["@deepseek-ai/dsh-web-app"]);
+    await assert.rejects(fs.access(installedPackage), { code: "ENOENT" });
+  });
+});
+
+
 async function withTemporaryHome(run) {
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), "dsh-desktop-test-"));
   try {
@@ -349,3 +386,4 @@ test("activates a trusted DSH plugin skin through the web profile", async () => 
     assert.deepEqual(JSON.parse(await fs.readFile(path.join(profile, "package.json"), "utf8")).dsh.profile.bundles, ["@deepseek-ai/dsh-web-app"]);
   });
 });
+
